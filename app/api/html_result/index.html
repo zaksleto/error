@@ -1,0 +1,2130 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>{{funil_name}}</title>
+  <!-- Tailwind CSS CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://unpkg.com/embla-carousel/embla-carousel.umd.js"></script>
+  <script crossorigin src="https://unpkg.com/react@18.3.1/umd/react.production.min.js" ></script>
+  <script crossorigin src="https://unpkg.com/react-dom@18.3.1/umd/react-dom.production.min.js"></script>
+  <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+  <script src="https://unpkg.com/prop-types/prop-types.min.js"></script>
+  <script src="https://unpkg.com/recharts/umd/Recharts.js" defer></script>
+  <script src="
+https://cdn.jsdelivr.net/npm/@splidejs/splide@4.1.4/dist/js/splide.min.js
+"></script>
+<link href="
+https://cdn.jsdelivr.net/npm/@splidejs/splide@4.1.4/dist/css/splide.min.css
+" rel="stylesheet">
+  <script>
+
+    tailwind.config = {
+      darkMode: "class", // Directly sets dark mode based on class
+      theme: {
+        extend: {
+          colors: {
+            // Base color definitions
+            background: "#ffffff",
+            foreground: "#0a0a0a",
+            card: {
+              DEFAULT: "#ffffff",
+              foreground: "#0a0a0a",
+            },
+            popover: {
+              DEFAULT: "#ffffff",
+              foreground: "#0a0a0a",
+            },
+            primary: {
+              DEFAULT: "#1a1a1a",
+              foreground: "#f7f7f7",
+            },
+            secondary: {
+              DEFAULT: "#f5f5f5",
+              foreground: "#1a1a1a",
+            },
+            muted: {
+              DEFAULT: "#f5f5f5",
+              foreground: "#737373",
+            },
+            accent: {
+              DEFAULT: "#f5f5f5",
+              foreground: "#1a1a1a",
+            },
+            destructive: {
+              DEFAULT: "#ff5e5e",
+              foreground: "#f7f7f7",
+            },
+            border: "#e4e4e4",
+            input: "#e4e4e4",
+            ring: "#0a0a0a",
+            chart: {
+              "1": "#eb6a56",
+              "2": "#3db4a6",
+              "3": "#2f5d80",
+              "4": "#f3c87c",
+              "5": "#f8a665",
+            },
+          },
+          borderRadius: {
+            lg: "0.5rem",
+            md: "0.375rem",
+            sm: "0.25rem",
+          },
+          keyframes: {
+            "accordion-down": {
+              from: { height: "0" },
+              to: { height: "var(--radix-accordion-content-height)" },
+            },
+            "accordion-up": {
+              from: { height: "var(--radix-accordion-content-height)" },
+              to: { height: "0" },
+            },
+          },
+          animation: {
+            "accordion-down": "accordion-down 0.2s ease-out",
+            "accordion-up": "accordion-up 0.2s ease-out",
+          },
+        },
+      },
+    };
+  </script>
+  <!-- SCRIPT LOCATION HEAD START -->
+  <!-- RENDER SCRIPT WITH LOCATION = HEAD HERE -->
+  <!-- SCRIPT LOCATION HEAD END -->
+</head>
+<body class="m-0">
+  <div id="root"></div>
+
+  <!-- React and ReactDOM -->
+  <!-- Babel -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Geist:wght@100..900&display=swap" rel="stylesheet">
+  
+  <style>
+    * {  
+      font-family: "Geist", sans-serif;
+    }
+    .fade-in {
+      opacity: 0;
+      animation: fadeIn 0.3s ease-in-out forwards;
+    }
+
+    @keyframes fadeIn {
+      from {
+        opacity: 0;
+      }
+      to {
+        opacity: 1;
+      }
+    }
+    
+  </style>
+  <script type="module">
+    // Import the functions you need from the SDKs you need
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/11.0.2/firebase-app.js";
+    import { getFirestore, doc, getDoc, setDoc, collection, addDoc } from "https://www.gstatic.com/firebasejs/11.0.2/firebase-firestore.js";
+    // TODO: Add SDKs for Firebase products that you want to use
+    // https://firebase.google.com/docs/web/setup#available-libraries
+  
+    // Your web app's Firebase configuration
+    const firebaseConfig = {
+      apiKey: "{{apiKey}}",
+      authDomain: "{{authDomain}}",
+      projectId: "{{projectId}}",
+      storageBucket: "{{storageBucket}}",
+      messagingSenderId: "{{messagingSenderId}}",
+      appId: "{{appId}}",
+    };
+  
+    // Initialize Firebase
+    window.app = initializeApp(firebaseConfig);
+    window.firestore = getFirestore(app);
+    window.doc = doc;
+    window.getDoc = getDoc;
+    window.collection = collection;
+    window.addDoc = addDoc;
+  </script>
+  <script type="text/babel">
+    
+    const gatherFormQuestions = () => {
+            // get forms values
+            document.querySelectorAll('form.user-form').forEach((form) => {
+              // get all inputs and textareas from children of this form
+              const inputs = form.querySelectorAll('input, textarea')
+              inputs.forEach((input) => {
+                id_value_pairs.push({
+                  id: input.id,
+                  value: input.value,
+                  type: input.type,
+                  label: input.id.split('--')[1],
+                })
+              })
+            })
+
+            document.querySelectorAll('.question-item.on').forEach((item) => {
+              const id = item.getAttribute('for')
+              const title = item.querySelector('.title-question').innerText
+
+              id_value_pairs.push({
+                id,
+                value: true,
+                label: title,
+                type: 'question'
+              })
+            })
+            document.querySelectorAll('.question-item.off').forEach((item) => {
+              const id = item.getAttribute('for')
+              const title = item.querySelector('.title-question').innerText
+
+              id_value_pairs.push({
+                id,
+                value: false,
+                label: title,
+                type: 'question'
+              })
+            })
+
+            // get all weight components
+            document.querySelectorAll('.weight').forEach((component) => {
+              const weight = component.querySelector('.weight-input').value
+              const title = component.querySelector('.weight-label').innerText
+              id_value_pairs.push({
+                id: component.id,
+                value: weight,
+                label: title,
+                type: 'weight'
+              })
+            })
+
+            // Remove duplicates by creating a Map with a composite key
+            const uniqueMap = new Map();
+            id_value_pairs.forEach(item => {
+              const key = `${item.id}-${item.type}-${item.label}`;
+              uniqueMap.set(key, item);
+            });
+            
+            // Convert back to array
+            id_value_pairs = Array.from(uniqueMap.values());
+        }
+
+    async function safeOpenUrl(url) {
+
+      try {
+        const db = firestore;
+        const endCollection = collection(db, 'end');
+        const newEnd = {
+          id: localStorage.getItem('uuid'),
+          date: new Date(),
+          funil_id: funil_id,
+          user_info: collectUserInfo(),
+        }
+
+        gatherFormQuestions()
+
+        newEnd.form_values = id_value_pairs
+        await addDoc(endCollection, newEnd);
+      } catch (error) {
+        console.log(error)
+        alert("Erro ao salvar o acesso, tente novamente")
+      }
+      // if is safari, change this page to the url
+      if (navigator.userAgent.includes('Safari')) {
+        window.location.href = url;
+        return;
+      }
+
+      const a = document.createElement('a');
+      a.href = url;
+      a.target = '_blank';
+      a.rel = 'noopener noreferrer';
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+    }
+    window.id_value_pairs = []
+    function uuidv4() {
+      return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function(c) {
+        var r = Math.random() * 16 | 0, v = c == 'x' ? r : (r & 0x3 | 0x8);
+        return v.toString(16);
+      });
+    }
+    function SimpleSpinner({ size = 40 }) {
+      const spinnerStyle = {
+        width: `${size}px`,
+        height: `${size}px`,
+        border: `4px solid #f3f3f3`,
+        borderTop: `4px solid #3498db`,
+        borderRadius: '50%',
+        animation: 'spin 1s linear infinite',
+      };
+
+      const keyframes = `
+        @keyframes spin {
+          0% { transform: rotate(0deg); }
+          100% { transform: rotate(360deg); }
+        }
+      `;
+
+      return React.createElement(
+        'div',
+        { style: { display: 'inline-block' } },
+        React.createElement('style', null, keyframes),
+        React.createElement('div', { style: spinnerStyle })
+      );
+    }
+
+    const funil_id = '{{funil_id}}'
+    const funil_name = '{{funil_name}}'
+
+    const app = window.app
+    const { useState, useEffect, createContext, useContext, useRef, useCallback } = React;
+
+
+    function cn(...classes) {
+      return classes.filter(Boolean).join(' ');
+    }
+
+    const RadioGroupItem = React.forwardRef(({ className, checked, ...props }, ref) => {
+      return (
+        <div
+          ref={ref}
+          className={cn(
+            "aspect-square h-4 w-4 rounded-full border border-primary text-primary ring-offset-background focus:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50",
+            checked && "bg-green-400",
+            className
+          )}
+          {...props}
+        >
+          <div className="flex items-center justify-center h-4 w-4 translate-x-[-1px] translate-y-[-1px]">
+            <i data-lucide="circle" className={cn("h-4 w-4 text-primary")} />
+          </div>
+        </div>
+      )
+    })
+
+const Card = React.forwardRef(({ className, ...props }, ref) => (
+  <div
+    ref={ref}
+    className={cn(
+      "rounded-lg border bg-card text-card-foreground shadow-sm",
+      className
+    )}
+    {...props}
+  />
+));
+Card.displayName = "Card";
+
+const CardHeader = React.forwardRef(({ className, ...props }, ref) => (
+  <div
+    ref={ref}
+    className={cn("flex flex-col space-y-1.5 p-6", className)}
+    {...props}
+  />
+));
+CardHeader.displayName = "CardHeader";
+
+const CardTitle = React.forwardRef(({ className, ...props }, ref) => (
+  <div
+    ref={ref}
+    className={cn(
+      "text-2xl font-semibold leading-none tracking-tight",
+      className
+    )}
+    {...props}
+  />
+));
+CardTitle.displayName = "CardTitle";
+
+const CardDescription = React.forwardRef(({ className, ...props }, ref) => (
+  <div
+    ref={ref}
+    className={cn("text-sm text-muted-foreground", className)}
+    {...props}
+  />
+));
+CardDescription.displayName = "CardDescription";
+
+const CardContent = React.forwardRef(({ className, ...props }, ref) => (
+  <div ref={ref} className={cn("p-6 pt-0", className)} {...props} />
+));
+CardContent.displayName = "CardContent";
+
+const CardFooter = React.forwardRef(({ className, ...props }, ref) => (
+  <div
+    ref={ref}
+    className={cn("flex items-center p-6 pt-0", className)}
+    {...props}
+  />
+));
+CardFooter.displayName = "CardFooter";
+
+    // Table Component
+    function Table({ className, ...props }) {
+      return (
+        <div className="relative w-full overflow-auto">
+          <table className={cn('w-full caption-bottom text-sm', className)} {...props} />
+        </div>
+      );
+    }
+
+    // TableHeader Component
+    function TableHeader({ className, ...props }) {
+      return <thead className={cn('[&_tr]:border-b', className)} {...props} />;
+    }
+
+    // TableBody Component
+    function TableBody({ className, ...props }) {
+      return <tbody className={cn('[&_tr:last-child]:border-0', className)} {...props} />;
+    }
+
+    // TableFooter Component
+    function TableFooter({ className, ...props }) {
+      return (
+        <tfoot
+          className={cn(
+            'border-t bg-muted/50 font-medium [&>tr]:last:border-b-0',
+            className
+          )}
+          {...props}
+        />
+      );
+    }
+
+    // TableRow Component
+    function TableRow({ className, ...props }) {
+      return (
+        <tr
+          className={cn(
+            'border-b transition-colors hover:bg-muted data-[state=selected]:bg-muted',
+            className
+          )}
+          {...props}
+        />
+      );
+    }
+
+    // TableHead Component
+    function TableHead({ className, ...props }) {
+      return (
+        <th
+          className={cn(
+            'h-12 px-4 text-left align-middle font-medium text-muted-foreground [&:has([role=checkbox])]:pr-0',
+            className
+          )}
+          {...props}
+        />
+      );
+    }
+
+    // TableCell Component
+    function TableCell({ className, ...props }) {
+      return (
+        <td
+          className={cn(
+            'p-4 align-middle [&:has([role=checkbox])]:pr-0',
+            className
+          )}
+          {...props}
+        />
+      );
+    }
+
+    // TableCaption Component
+    function TableCaption({ className, ...props }) {
+      return (
+        <caption
+          className={cn('mt-4 text-sm text-muted-foreground', className)}
+          {...props}
+        />
+      );
+    }
+
+    // Variant utility function
+    function getVariantClasses(variant, size, additionalClasses) {
+      const variants = {
+        default: "bg-primary text-primary-foreground hover:bg-primary/90",
+        destructive: "bg-destructive text-destructive-foreground hover:bg-destructive/90",
+        outline: "border border-input bg-background hover:bg-accent hover:text-accent-foreground",
+        secondary: "bg-secondary text-secondary-foreground hover:bg-secondary/80",
+        ghost: "hover:bg-accent hover:text-accent-foreground",
+        link: "text-primary underline-offset-4 hover:underline",
+      };
+
+      const sizes = {
+        default: "h-10 px-4 py-2",
+        sm: "h-9 rounded-md px-3",
+        lg: "h-11 rounded-md px-8",
+        icon: "h-10 w-10",
+      };
+
+      return cn(
+        "inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-md text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg]:size-4 [&_svg]:shrink-0",
+        variants[variant] || variants.default,
+        sizes[size] || sizes.default,
+        additionalClasses
+      );
+    }
+
+    // Button Component
+    function Button({
+      className,
+      variant = "default",
+      size = "default",
+      asChild = false,
+      ...props
+    }) {
+      const Component = asChild ? 'span' : 'button'; // Default to <button> unless `asChild` is true
+      return (
+        <Component
+          className={getVariantClasses(variant, size, className)}
+          {...props}
+        />
+      );
+    }
+
+    const Progress = React.forwardRef(({ className, value, color, ...props }, ref) => (
+      <div
+        ref={ref}
+        className={cn(
+          "relative h-4 w-full overflow-hidden rounded-full bg-secondary",
+          className
+        )}
+        {...props}
+      >
+        <div
+          className="h-full flex-1 bg-primary transition-all"
+          style={{ transform: `translateX(-${100 - (value || 0)}%)`, backgroundColor: color }}
+        />
+      </div>
+    ));
+
+
+
+
+
+const Avatar = React.forwardRef(({ className, ...props }, ref) => (
+  <div
+    ref={ref}
+    className={cn(
+      "relative flex h-10 w-10 shrink-0 overflow-hidden rounded-full",
+      className
+    )}
+    {...props}
+  />
+));
+Avatar.displayName = "Avatar";
+
+const AvatarImage = React.forwardRef(({ className, ...props }, ref) => (
+  <img
+    ref={ref}
+    className={cn("aspect-square h-full w-full object-cover", className)}
+    {...props}
+  />
+));
+AvatarImage.displayName = "AvatarImage";
+
+const AvatarFallback = React.forwardRef(({ className, ...props }, ref) => (
+  <div
+    ref={ref}
+    className={cn(
+      "flex h-full w-full items-center justify-center rounded-full bg-muted",
+      className
+    )}
+    {...props}
+  />
+));
+AvatarFallback.displayName = "AvatarFallback";
+function PricePlanItem({
+  id,
+  title,
+  description,
+  price,
+  descount,
+  currency = "R$",
+  highlight = false,
+  text_highlight,
+  onClick,
+  checked,
+  url
+}) {
+  const originalPrice = descount ? price + descount : price
+  const installmentPrice = (originalPrice / 12).toFixed(2)
+
+  return (
+    <Card 
+      onClick={onClick}
+      className={cn(
+        "relative w-full transition-colors", 
+        highlight && "bg-primary text-primary-foreground"
+      )}
+    >
+      {highlight && (
+        <div className="absolute -top-3 left-0 right-0 text-center">
+          <span className="bg-primary px-4 py-1 text-xs font-medium uppercase text-primary-foreground rounded-full">
+            {text_highlight || 'Mais Popular'}
+          </span>
+        </div>
+      )}
+      <label
+        htmlFor={id}
+        className={cn(
+          "flex items-center justify-between p-4 cursor-pointer",
+          highlight && "text-primary-foreground"
+        )}
+      >
+        <div className="flex items-center gap-4">
+          <RadioGroupItem 
+            value={id} 
+            checked={checked}
+            id={id}
+            className={cn(
+              highlight && "[&_span]:text-primary-foreground"
+            )}
+          />
+          <div className="space-y-1">
+            <div className="font-medium">{title}</div>
+            <div className="text-sm text-muted-foreground">
+              {description}
+            </div>
+          </div>
+        </div>
+        <div className="text-right">
+          <div className="flex items-center justify-end gap-1">
+            <span className="text-sm">{currency}</span>
+            <span className="text-2xl font-bold">{price ? price.toFixed(2) : 'Gratis'}</span>
+          </div>
+          {!!(descount && originalPrice && currency) && (
+            <div className="text-sm text-muted-foreground line-through">
+              {currency}{originalPrice.toFixed(2)}
+            </div>
+          )}
+          {
+            !!(price) && (
+                <div className="text-sm text-muted-foreground">
+                    ou {currency}{installmentPrice} avista
+                </div>
+            )
+          }
+        </div>
+      </label>
+    </Card>
+  )
+}
+const AccordionContext = createContext();
+
+    const Accordion = ({ children }) => {
+      const [openIndex, setOpenIndex] = useState(null);
+
+      const toggleIndex = (index) => {
+        setOpenIndex((prev) => (prev === index ? null : index));
+      };
+
+      return (
+        <AccordionContext.Provider value={{ openIndex, toggleIndex }}>
+          <div className="w-full border rounded-md">{children}</div>
+        </AccordionContext.Provider>
+      );
+    };
+
+    const AccordionItem = ({ children, index }) => {
+      const { openIndex } = useContext(AccordionContext);
+      const isOpen = openIndex === index;
+
+      return (
+        <div className="border-b">
+          {React.Children.map(children, (child) => React.cloneElement(child, { index, isOpen }))}
+        </div>
+      );
+    };
+
+    const AccordionTrigger = ({ children, index, isOpen }) => {
+      const { toggleIndex } = useContext(AccordionContext);
+
+      return (
+        <button
+          onClick={() => toggleIndex(index)}
+          className="flex justify-between items-center w-full p-4 text-lg font-medium bg-white hover:bg-gray-100 transition"
+        >
+          <span>{children}</span>
+          <svg
+            className={`h-4 w-4 transition-transform ${
+              isOpen ? "rotate-180" : ""
+            }`}
+            xmlns="http://www.w3.org/2000/svg"
+            fill="none"
+            viewBox="0 0 24 24"
+            stroke="currentColor"
+          >
+            <path
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              strokeWidth="2"
+              d="M19 9l-7 7-7-7"
+            />
+          </svg>
+        </button>
+      );
+    };
+
+    const AccordionContent = ({ children, isOpen }) => {
+      return (
+        <div
+          className={`overflow-hidden transition-max-height duration-300 ${
+            isOpen ? "max-h-screen" : "max-h-0"
+          }`}
+        >
+          <div className="p-4 text-gray-700 bg-gray-50">{children}</div>
+        </div>
+      );
+    };
+    function AudioWaveform({ audioBuffer, currentTime, duration }) {
+  const canvasRef = useRef(null);
+
+  useEffect(() => {
+    if (!audioBuffer) return;
+
+    const canvas = canvasRef.current;
+    if (!canvas) return;
+
+    const ctx = canvas.getContext('2d');
+    if (!ctx) return;
+
+    const dpr = window.devicePixelRatio || 1;
+    canvas.width = canvas.offsetWidth * dpr;
+    canvas.height = canvas.offsetHeight * dpr;
+    ctx.scale(dpr, dpr);
+
+    const data = audioBuffer.getChannelData(0);
+    const step = Math.ceil(data.length / canvas.width);
+    const amp = canvas.height / 2;
+
+    const drawWaveform = (start, end, color) => {
+      ctx.strokeStyle = color;
+      ctx.lineWidth = 2;
+      ctx.beginPath();
+
+      for (let i = start; i < end; i++) {
+        const min = Math.min(...data.slice(i * step, (i + 1) * step));
+        const max = Math.max(...data.slice(i * step, (i + 1) * step));
+        ctx.moveTo(i, (1 + min) * amp);
+        ctx.lineTo(i, (1 + max) * amp);
+      }
+
+      ctx.stroke();
+    };
+
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+    drawWaveform(0, canvas.width, '#d1d5db');
+
+    const progress = currentTime / duration;
+    const progressWidth = canvas.width * progress;
+    drawWaveform(0, progressWidth, '#3b82f6');
+  }, [audioBuffer, currentTime, duration]);
+
+  return <canvas ref={canvasRef} className="w-full h-12" />;
+}
+function AudioListener({ type, src, avatar }) {
+  const [isPlaying, setIsPlaying] = useState(false);
+  const [currentTime, setCurrentTime] = useState(0);
+  const [duration, setDuration] = useState(0);
+  const [volume, setVolume] = useState(1);
+  const [isHovering, setIsHovering] = useState(false);
+  const [audioBuffer, setAudioBuffer] = useState(null);
+  const [isLoading, setIsLoading] = useState(true);
+  const audioRef = useRef(null);
+
+  useEffect(() => {
+    const audio = audioRef.current;
+    if (!audio) return;
+
+    // Initialize AudioContext and load audio data
+    const initAudio = async () => {
+      if (audioBuffer) return;
+      try {
+        setIsLoading(true);
+        audio.current = new (window.AudioContext || window.webkitAudioContext)();
+        const response = await fetch(src);
+        const arrayBuffer = await response.arrayBuffer();
+        const decodedBuffer = await audio.current.decodeAudioData(arrayBuffer);
+        setAudioBuffer(decodedBuffer);
+        setIsLoading(false);
+      } catch (error) {
+        console.error("Error loading audio:", error);
+        setIsLoading(false);
+      }
+    };
+
+    try {
+      initAudio();
+    } catch (error) {
+      console.error("Error loading audio:", error);
+      setTimeout(() => {
+        initAudio();
+      }, 1000);
+    }
+
+  }, [src]);
+
+  const togglePlayPause = () => {
+    const audio = audioRef.current;
+    if (audio) {
+      if (isPlaying) {
+        audio.pause();
+      } else {
+        audio.play();
+      }
+      setIsPlaying(p => !p);
+    }
+  }
+
+  const handleTimeChange = (newTime) => {
+    const audio = audioRef.current;
+    if (audio) {
+      console.log('timechange', newTime)
+      setIsPlaying(false);
+      audio.currentTime = newTime;
+      audio.pause();
+    }
+  };
+
+  const handleVolumeChange = (newVolume) => {
+    const audio = audioRef.current;
+    if (audio) {
+      audio.volume = newVolume[0];
+      setVolume(newVolume[0]);
+    }
+  };
+
+  const formatTime = (time) => {
+    const minutes = Math.floor(time / 60);
+    const seconds = Math.floor(time % 60);
+    return `${minutes}:${seconds.toString().padStart(2, '0')}`;
+  };
+
+  const handleReset = () => {
+    const audio = audioRef.current;
+    if (audio) {
+      audio.currentTime = 0;
+      setCurrentTime(0);
+      if (isPlaying) {
+        audio.pause();
+        setIsPlaying(false);
+      }
+    }
+  };
+
+  return (
+    <div 
+      className="bg-background rounded-lg shadow-md w-full max-w-3xl mx-auto overflow-hidden transition-all duration-300 ease-in-out"
+      // onMouseEnter={() => setIsHovering(true)}
+      // onMouseLeave={() => setIsHovering(false)}
+    >
+      <div className="flex items-center p-2 h-[60px]">
+        <audio 
+          ref={audioRef} 
+          src={src}
+          
+          onLoadedData={() => {
+            const audio = audioRef.current;
+            setDuration(audio.duration);
+          }}
+          onTimeUpdate={(e) => {
+            console.log('timeupdate', e.target.currentTime)
+            setCurrentTime(e.target.currentTime)
+          }}
+        />
+        <Avatar className="w-10 h-10 flex-shrink-0 mr-4">
+          <AvatarImage src={avatar} alt="Avatar" />
+          <AvatarFallback>AV</AvatarFallback>
+        </Avatar>
+        <div className="flex-grow flex items-center space-x-4">
+          <div className="flex-grow">
+            {isLoading ? (
+              <div className="w-full h-12 bg-gray-200 animate-pulse rounded"></div>
+            ) : audioBuffer ? (
+              <AudioWaveform audioBuffer={audioBuffer} currentTime={currentTime} duration={duration} />
+            ) : (
+              <div className="w-full h-12 bg-red-200 rounded flex items-center justify-center">
+                Failed to load audio
+              </div>
+            )}
+          </div>
+          <div className="flex items-center space-x-2 flex-shrink-0">
+            <span className="text-sm text-muted-foreground w-20 text-center">
+              {formatTime(currentTime)} / {formatTime(duration)}
+            </span>
+            <Button variant="outline" size="icon" onClick={handleReset}>
+              <i data-lucide="rotate-ccw" className="h-4 w-4 text-primary" />
+            </Button>
+            <Button variant="default" size="icon" onClick={togglePlayPause}>
+              {isPlaying ? <i data-lucide="pause" className="h-4 w-4 text-primary" /> : <i data-lucide="play" className="h-4 w-4 text-white" />}
+            </Button>
+          </div>
+        </div>
+      </div>
+      {
+        // TODO: fix this
+        false && (
+          <>
+          
+          <div className="px-4 py-2">
+            <Slider
+              value={currentTime}
+              max={duration}
+              step={1}
+              onValueChange={handleTimeChange}
+              className="w-full"
+            />
+          </div>
+          <div 
+            className="flex items-center px-4 transition-all duration-300 ease-in-out overflow-hidden"
+            style={{ height: isHovering ? '20px' : '0' }}
+          >
+            <i data-lucide="volume-2" className="h-4 w-4 mr-2 text-muted-foreground flex-shrink-0" />
+            <Slider
+              value={[volume]}
+              max={1}
+              step={0.01}
+              onValueChange={handleVolumeChange}
+              className="w-full"
+            />
+          </div>
+          </>
+        )
+      }
+    </div>
+  );
+}
+const Slider = React.forwardRef(({ min = 0, max = 100, step = 1, value, onValueChange, ...rest }, ref) => {
+  const sliderRef = useRef(null);
+
+  const handleMouseDown = (e) => {
+    e.preventDefault(); // Prevent text selection
+    updateValue(e);
+    document.addEventListener('mousemove', updateValue);
+    document.addEventListener('mouseup', stopDragging);
+  };
+
+  const handleTouchStart = (e) => {
+    e.preventDefault(); // Prevent scrolling on mobile
+    updateValue(e.touches[0]);
+    document.addEventListener('touchmove', updateValue, { passive: false });
+    document.addEventListener('touchend', stopDragging, { passive: false });
+  };
+
+  const updateValue = (e) => {
+    const slider = sliderRef.current;
+    const rect = slider.getBoundingClientRect();
+    let clientX = e.clientX;
+    if (e.touches) {
+      clientX = e.touches[0].clientX;
+    }
+    const percent = ((clientX - rect.left) / rect.width);
+    const clampedPercent = Math.min(Math.max(percent, 0), 1);
+    const newValue = min + clampedPercent * (max - min);
+    const steppedValue = Math.round(newValue / step) * step;
+    onValueChange(steppedValue);
+  };
+
+  const stopDragging = () => {
+    document.removeEventListener('mousemove', updateValue);
+    document.removeEventListener('touchmove', updateValue);
+    document.removeEventListener('mouseup', stopDragging);
+    document.removeEventListener('touchend', stopDragging);
+  };
+
+  return (
+    <div className="relative flex w-full touch-none select-none items-center" {...rest}>
+      <div
+        ref={sliderRef}
+        className="relative h-2 w-full grow cursor-pointer rounded-full bg-secondary"
+      >
+        <div
+          className="absolute h-full bg-primary rounded-md"
+          style={{ width: `${((value - min) / (max - min)) * 100}%` }}
+        />
+        <div
+          className="absolute cursor-pointer z-10 translate-y-[-30%] translate-x-[-50%] block h-5 w-5 rounded-full border-2 border-primary bg-background ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
+          style={{ left: `${((value - min) / (max - min)) * 100}%` }}
+          onMouseDown={handleMouseDown}
+          onTouchStart={handleTouchStart}
+          role="slider"
+          aria-valuemin={min}
+          aria-valuemax={max}
+          aria-valuenow={value}
+          aria-label="Custom Slider"
+        />
+      </div>
+    </div>
+  );
+});
+
+const AnimatedNumber = ({ value, duration = 1000 }) => {
+  const [displayValue, setDisplayValue] = useState(value);
+
+  useEffect(() => {
+    const startValue = displayValue;
+    const startTime = performance.now();
+
+    const animate = (currentTime) => {
+      const elapsedTime = currentTime - startTime;
+      const progress = Math.min(elapsedTime / duration, 1);
+
+      const currentValue = Math.round(startValue + (value - startValue) * progress);
+      setDisplayValue(currentValue);
+
+      if (progress < 1) {
+        requestAnimationFrame(animate);
+      }
+    };
+
+    requestAnimationFrame(animate);
+  }, [value, duration]);
+
+  return <span>{displayValue}</span>;
+};
+
+    const stepComponentsJSX = {
+      weight: React.forwardRef(function WeightComponent(props, ref) { 
+        const {
+            weight,
+            color,
+            title
+        } = props
+        const [Weight, setWeight] = React.useState(weight)
+
+        return <div ref={ref} id={`weight-${title}-${color}-starts-${weight}`} className="w-full flex flex-col gap-2 text-center items-center justify-center weight my-4">
+            <div className="text-lg font-semibold weight-label">
+                {title}
+            </div>
+            <div className="flex flex-row gap-2 items-center justify-center border-[1px] border-gray-200 rounded-md p-2 w-fit">
+                <input type="number" className="weight-input" style={{
+                    width: '60px'
+                }} min={0} max={400} value={Weight} onChange={(e) => setWeight(Number(e.target.value))} />
+                <span className="text-sm text-muted-foreground">
+                    Kg
+                </span>
+            </div>
+            <div className="w-full h-[100px] relative">
+                <i data-lucide="weight" style={{
+                    color: color
+                }} className="w-24 h-24 absolute top-[50%] left-[50%] text-neutral-800 -translate-x-[50%] -translate-y-[50%]"/>
+                <div className="absolute top-[50%] left-[50%] -translate-x-[50%] -translate-y-[50%] mt-3 font-semibold">
+                    <AnimatedNumber value={Weight} duration={1000} />Kg
+                </div>
+            </div>
+        </div>
+      }),
+      height: React.forwardRef(function HeightComponent(props, ref) {
+        const {
+            height,
+            color,
+            title
+        } = props
+        const [Height, setHeight] = React.useState(height)
+        // similar to weight component, but with height
+        return <div ref={ref} className="w-full flex flex-col gap-2 text-center items-center justify-center my-4">
+            <div className="text-lg font-semibold">
+                {title}
+            </div>
+            <div className="flex flex-row gap-2 items-center justify-center border-[1px] border-gray-200 rounded-md p-2 w-fit">
+                <input type="number" className="height-input" min={0} max={250} value={Height} onChange={(e) => setHeight(Number(e.target.value))} />
+                <span className="text-sm text-muted-foreground">
+                    Cm
+                </span>
+            </div>
+            <div className="w-full h-[100px] relative">
+                <div className="absolute top-[50%] left-[62%] -translate-x-[50%] -translate-y-[50%]">
+                    <i data-lucide="ruler" style={{
+                        color: color
+                    }} className="w-24 h-24 rotate-[45deg] text-neutral-800 "/>
+                    <div className="absolute w-2 h-2 rounded-full left-[75%] opacity-75 duration-100 ease-in-out" style={{
+                        bottom: `${Math.round((Height / 250) * 100)}%`,
+                        backgroundColor: color
+                    }}>
+
+                    </div>
+                </div>
+                <div className="absolute top-[50%] left-[50%] -translate-x-[50%] -translate-y-[50%] mt-3 font-semibold">
+                    <AnimatedNumber value={Height} duration={1000} />Cm
+                </div>
+            </div>
+        </div>
+      }),
+      level: React.forwardRef(function LevelComponent(props, ref) {
+        const {
+            title,
+            description,
+            color,
+            value
+        } = props
+        // like the progress component
+        return <div ref={ref} className="w-full flex flex-col gap-0.5 items-start justify-start">
+            <div className="text-lg font-semibold">{title}</div>
+            <div className="flex flex-row justify-between items-center w-full">
+                <div className="text-sm text-muted-foreground mb-2">{description}</div>
+                <div className="text-sm text-muted-foreground mb-2 font-bold">{value}%</div>
+            </div>
+            <Progress value={value} color={color}/>
+        </div>
+      }),
+      alert: (props) => {
+        const { text, color, bg_color } = props
+        return <div className="w-full flex flex-col gap-2 text-center py-4 px-6 rounded-md" style={{
+            backgroundColor: bg_color,
+        }}>
+            <span className="text-md text-muted-foreground" style={{
+                color
+            }}>
+                {text}
+            </span>
+        </div>
+      },
+      script: React.forwardRef((props, ref) => {
+        const [id, setId] = React.useState(null)
+        function executeScript(scriptString) {
+          // Create a temporary container to parse the script tag
+          const tempDiv = document.createElement('div');
+          tempDiv.innerHTML = scriptString.trim();
+
+          // Extract the script element from the parsed string
+          const script = tempDiv.querySelector('script');
+
+          if (script) {
+              const newScript = document.createElement('script');
+
+              // Copy attributes like 'async', 'type', etc.
+              for (const attr of script.attributes) {
+                  newScript.setAttribute(attr.name, attr.value);
+              }
+
+              // Set the script content
+              newScript.textContent = script.textContent;
+
+              // Append the script to the document to execute it
+              document.body.appendChild(newScript);
+          } else {
+              console.error('No script tag found in the provided string.');
+              // must be a iframe or something
+              document.getElementById(id).innerHTML = scriptString
+          }
+      }
+        React.useEffect(() => {
+          const _id = String(Math.random()).substring(2, 15)
+          setId(_id)
+        }, [])
+
+        React.useEffect(() => {
+          console.log(id)
+          if (!id) return
+          executeScript(props.script)
+        }, [id])
+
+        return <div className="w-full flex items-center justify-center" id={id}></div>
+      }),
+      text: (props) => {
+          const { headline, description, color, type } = props
+          return <div className="w-full flex flex-col gap-2 text-center">
+              <h2 className="text-lg font-semibold" style={{
+                  color
+              }} dangerouslySetInnerHTML={{
+                  __html: headline
+              }}></h2>
+          </div>
+      },
+      image: (props) => {
+          const { src, alt } = props
+          return <div className="w-full flex flex-col gap-2 text-center">
+              <img src={src} alt={alt} className="" />
+              <span className="text-sm text-muted-foreground">
+                  {alt}
+              </span>
+          </div>
+      },
+      timer: React.forwardRef(function Timer(props, ref) {
+          let {
+              type,
+              headline,
+              description,
+              end_description,
+              duration,
+              date,
+              use,
+              text_color,
+              bg_color,
+              reset
+          } = props
+          const [remainingText, setRemainingText] = React.useState(`${0}d ${0}h ${0}m ${0}s`)
+          const [done, setDone] = React.useState(false)
+          React.useEffect(() => {
+              const initalRenderDate = new Date()
+              if (date.seconds) {
+                date = new Date(date.seconds * 1000)
+              }
+              if (use === 'date' && date && date instanceof Date) {
+                  const setTime = () => {
+                      const now = new Date()
+                      const diff = date.getTime() - now.getTime()
+                      const days = Math.floor(diff / (1000 * 60 * 60 * 24))
+                      const hours = Math.floor((diff % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60))
+                      const minutes = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60))
+                      const seconds = Math.floor((diff % (1000 * 60)) / 1000)
+
+                      if (seconds <= 0) {
+                        setDone(true)
+                      }
+
+                      setRemainingText(`${days}d ${hours}h ${minutes}m ${seconds}s`)
+                  }
+                  const interval = setInterval(setTime, 1000)
+                  setTime()
+                  return () => clearInterval(interval)
+              } else if (use === 'duration' && duration) {
+                  // make it a countdown
+                  let countSeconds = duration
+                  const setTime = () => {
+                      countSeconds -= 1
+                      setRemainingText(`${Math.floor(countSeconds / 60)}m ${countSeconds % 60}s`)
+                      if (countSeconds <= 0) {
+                          setDone(true)
+                          clearInterval(interval)
+                      }
+                  }
+                  const interval = setInterval(setTime, 1000)
+                  setTime()
+                  return () => clearInterval(interval)
+              }
+          }, [reset, date, duration, use])
+
+          return <div ref={ref} className="w-full flex flex-col gap-2 py-2 text-center rounded-md" style={{
+              backgroundColor: bg_color,
+          }}>
+              {
+                  !done ? (
+                      <div className="flex flex-col gap-1 items-center justify-center">
+                          <div className="text-md font-semibold" style={{
+                              color: text_color,
+                          }}>
+                              {headline}
+                              <br />
+                              <span className="text-sm opacity-50">
+                                  {description}
+                              </span>
+                          </div>
+                          <div className="text-md font-medium" style={{
+                              color: text_color,
+                          }}>
+                              {remainingText}
+                          </div>
+                      </div>
+                  ) : (
+                      <span className="text-sm font-medium" style={{
+                          color: text_color,
+                      }}>
+                          {end_description}
+                      </span>
+                  )
+              }
+          </div>
+      }),
+      spacer: React.forwardRef(function Spacer(props, ref) {
+          const {
+              height,
+          } = props
+          return <div ref={ref} className="shrink-0 h-[1px] w-full" style={{
+              marginTop: height,
+              marginBottom: height,
+              backgroundColor: '#e5e5e5',
+          }}></div>
+      }),
+      benefits: React.forwardRef(function Benefits(props, ref) {
+        const {
+            headline,
+            description,
+            comparisons,
+            benefits,
+        } = props
+        
+        return <div ref={ref} className="w-full flex flex-col gap-2 text-center">
+            <Table>
+                <TableCaption>{description}</TableCaption>
+                <TableHeader>
+                    <TableRow>
+                        <TableHead className="w-[100px]">{headline}</TableHead>
+                        {
+                            comparisons.map((comparison) => {
+                                return <TableHead className="text-center" key={comparison}>{comparison}</TableHead>
+                            })
+                        }
+                    </TableRow>
+                </TableHeader>
+                <TableBody>
+                    {
+                        Object.entries(benefits).map(([rowId, row]) => (
+                            <TableRow key={rowId}>
+                                <TableCell className="font-medium">{row.title}</TableCell>
+                                {
+                                    row.comparisons.map((comparison) => {
+                                        return <TableCell key={comparison+rowId}>{comparison}</TableCell>
+                                    })
+                                }
+                            </TableRow>
+                        ))
+                    }
+                </TableBody>
+            </Table>
+        </div>
+      }),
+      button: React.forwardRef(function ButtonComponent(props, ref) {
+        const {
+            label,
+            destiny,
+            facebook_event,
+            delay,
+            destiny_url,
+            color,
+            onNext,
+            is_end
+        } = props
+        const [remainingDelay, setRemainingDelay] = React.useState(delay || 0)
+        React.useEffect(() => {
+            setRemainingDelay(delay || 0)
+            // incrementally decrease the remaining delay
+            const interval = setInterval(() => {
+                setRemainingDelay(prevRemainingDelay => {
+                    if (prevRemainingDelay <= 0) {
+                        clearInterval(interval)
+                        return 0
+                    }
+                    return prevRemainingDelay - 1
+                })
+            }, 1000)
+            return () => clearInterval(interval)
+        }, [delay])
+
+        const handleClick = () => {
+          (async () => {
+            if (facebook_event) {
+              if (facebook_event.startsWith('fbq')) {
+                try {
+                  eval(facebook_event)
+                } catch (error) {
+                  console.log(error)
+                }
+              } else {
+                fbq('track', facebook_event);
+              }
+            }
+            if (is_end) {
+                try {
+                  const db = firestore;
+                  const endCollection = collection(db, 'end');
+                  const newEnd = {
+                    id: localStorage.getItem('uuid'),
+                    date: new Date(),
+                    funil_id: funil_id,
+                    user_info: collectUserInfo(),
+                  }
+
+                  gatherFormQuestions()
+
+                  newEnd.form_values = id_value_pairs
+                  await addDoc(endCollection, newEnd);
+                } catch (error) {
+                  console.log(error)
+                  alert("Erro ao salvar o acesso, tente novamente")
+                }
+            }
+            if (destiny === 'next') {
+              gatherFormQuestions()
+              onNext()
+            } else if (destiny === 'url' && destiny_url) {
+                if (!destiny_url) return alert('URL não informada')
+                safeOpenUrl(destiny_url);
+            }
+          })()
+        }
+        return <div ref={ref} className="w-full flex flex-col gap-2 text-center">
+            <Button 
+                disabled={remainingDelay > 0} 
+                onClick={handleClick} 
+                className="w-full" 
+                style={{
+                    backgroundColor: color,
+                }}
+            >
+                {remainingDelay > 0 ? `${remainingDelay}s` : label}
+            </Button>
+        </div>
+      }),
+      progress: React.forwardRef(function ProgressComponent(props, ref) {
+          const {
+              title,
+              final_progress,
+              duration,
+          } = props
+          const [progress, setProgress] = React.useState(0)
+          const [remainingTime, setRemainingTime] = React.useState(duration)
+
+          React.useEffect(() => {
+              const interval = setInterval(() => {
+                  setRemainingTime(prevRemainingTime => {
+                      if (prevRemainingTime <= 0) {
+                          clearInterval(interval)
+                          return 0
+                      }
+                      return prevRemainingTime - 1
+                  })
+              }, 1000)
+              return () => clearInterval(interval)
+          }, [duration])
+
+          React.useEffect(() => {
+              // Calculate the progress percentage based on elapsed time
+              setProgress(
+                  ((duration - remainingTime) / duration) * final_progress
+              );
+          }, [remainingTime, duration, final_progress]);
+
+          return <div ref={ref} className="w-full flex flex-col gap-2 text-center">
+              <div className="w-full text-center">{title}</div>
+              <Progress value={progress} className="w-full" />
+          </div>
+      }),
+      feedback: React.forwardRef(function FeedbackComponent(props, ref) {
+        const {
+            carousel,
+            feedbacks,
+        } = props
+        
+        return <div ref={ref} className="w-full flex flex-col gap-2 text-center px-10">
+                    {
+                        feedbacks.map((feedback, index) => {
+                            return <Card className="w-full">
+                                        <CardContent className="p-2">
+                                            <CardHeader className="flex flex-col gap-2 items-center justify-center">
+                                                <Avatar className="h-10 w-10">
+                                                    <AvatarImage src="https://github.com/shadcn.png" alt="@shadcn" />
+                                                    <AvatarFallback>{index+1}.</AvatarFallback>
+                                                </Avatar>
+                                                <CardTitle>
+                                                    {feedback.title}
+                                                    <br />
+                                                    <span className="text-sm text-muted-foreground">
+                                                        {feedback.social}
+                                                    </span>
+                                                </CardTitle>
+                                                <CardDescription>
+                                                    {
+                                                        feedback.stars > 0 && (
+                                                            <div className="flex flex-row items-center justify-center gap-2 mb-2">
+                                                                {
+                                                                    new Array(feedback.stars).fill(0).map((_, index) => {
+                                                                        return <i data-lucide="star" key={index} className="h-4 w-4 text-yellow-300" />
+                                                                    })
+                                                                }
+                                                                {
+                                                                    new Array(5 - feedback.stars).fill(0).map((_, index) => {
+                                                                        return <i data-lucide="star" key={index} className="h-4 w-4 text-gray-300" />
+                                                                    })
+                                                                }
+                                                            </div>
+                                                        )
+                                                    }
+                                                    <div>
+                                                        {feedback.description}
+                                                    </div>
+                                                </CardDescription> 
+                                            </CardHeader>
+                                        </CardContent>
+                                    </Card>
+                        })
+                    }
+        </div>
+      }),
+      price: React.forwardRef(function PriceComponent(props, ref) {
+        const {
+          plans,
+          button_text,
+          UTR_redirect,
+          border_radius,
+          color,
+          text_highlight
+        } = props
+        const [selectedPlan, setSelectedPlan] = React.useState(null)
+        return <div ref={ref} className="w-full flex flex-col gap-2 text-center">
+            <div className="space-y-4 w-full max-w-md mx-auto">
+                {
+                    plans.map((plan) => {
+                        return <PricePlanItem
+                         key={plan.id} 
+                         id={plan.id}
+                         title={plan.title}
+                         description={plan.description}
+                         onClick={() => setSelectedPlan(plan)}
+                         checked={selectedPlan?.id === plan.id}
+                         price={Number(plan.price) || 0}
+                         descount={Number(plan.descount) || 0}
+                         currency={plan.currency}
+                         highlight={plan.highlight || false}
+                         text_highlight={text_highlight} 
+                        />
+                    })
+                }
+            </div>
+            <Button className="w-full mt-2 " disabled={!selectedPlan} onClick={() => {
+              if (selectedPlan?.url) {
+                safeOpenUrl(selectedPlan.url);
+              }
+            }}>
+                {button_text || 'Comprar'}
+            </Button>
+        </div>
+      }),
+      accordion: React.forwardRef(function AccordionComponent(props, ref) {
+        const {
+            items
+        } = props
+        return <div ref={ref} className="w-full flex flex-col gap-2 text-center">
+            <Accordion type="single" collapsible className="w-full">
+                {
+                    items.map((item, index) => {
+                        return <AccordionItem key={item.id} value={item.id} index={index}>
+                            <AccordionTrigger index={index}>
+                                {item.title}
+                            </AccordionTrigger>
+                            <AccordionContent>
+                                <p className="text-sm text-muted-foreground">
+                                    {item.description}
+                                </p>
+                            </AccordionContent>
+                        </AccordionItem>
+                    })
+                }
+            </Accordion>
+        </div>
+      }),
+      audio: React.forwardRef(function AudioComponent(props, ref) {
+        const {
+            src,
+            avatar,
+        } = props
+        return <div ref={ref} className="w-full flex flex-col gap-2 text-center">
+            <AudioListener type="audio" src={src} avatar={avatar} />
+        </div>
+      }),
+      chart: React.forwardRef(function ChartComponent(props, ref) {
+        const {
+          data,
+          color
+        } = props;
+        const chartConfig = {
+          value: {
+            label: "Valor",
+            color: color || "#eb6a56",
+          },
+        };
+        
+        return <div ref={ref} className="w-full flex flex-col gap-2 text-center">
+          <ChartContainer config={chartConfig}>
+            <Recharts.LineChart
+              width={500}
+              height={300}
+              data={data}
+              margin={{
+                left: 12,
+                right: 12,
+              }}
+            >
+              <Recharts.CartesianGrid vertical={false} />
+              <Recharts.XAxis 
+                dataKey="name" 
+                interval={0}
+                tickLine={false}
+                axisLine={false}
+                tickFormatter={(value) => value.slice(0, 3)+(value.length > 3 ? '.' : '')}
+              />
+              <Recharts.Line 
+                dataKey="value"
+                type="linear"
+                strokeWidth={2}
+                stroke={color}
+                dot={false} 
+              />
+            </Recharts.LineChart>
+          </ChartContainer>
+        </div>
+      }),
+
+      chart_circles: React.forwardRef(function ChartCirclesComponent(props, ref) {
+        const {
+          data
+        } = props;
+        
+        return <div ref={ref} className="w-full flex flex-col gap-2 text-center my-4">
+          <div className={`flex flex-col gap-6 text-center`}>
+            {data.map((progress, index) => (
+              <div key={index} className="flex flex-col gap-2">
+                <CircularProgress {...progress} type="circle"/>
+              </div>
+            ))}
+          </div>
+        </div>
+      }),
+
+      video: React.forwardRef(function VideoComponent(props, ref) {
+        const {
+          iframe,
+          id,
+          url,
+        } = props
+
+        return <div ref={ref} className="w-full flex flex-col gap-2 text-center">
+          {
+            url && <video src={url} controls />
+          }
+          {
+            iframe && <div dangerouslySetInnerHTML={{ __html: iframe }} />
+          }
+        </div>
+      }),
+      form: React.forwardRef(function FormComponent(props, ref) {
+        const {
+          items,
+        } = props
+
+
+        /**
+         * @type {{
+            id: string
+            type: 'text' | 'email' | 'phone' | 'number' | 'textarea'
+            label: string
+            placeholder?: string
+            required?: boolean
+            default_value?: string
+            value?: string
+          }[]}
+         * */
+        const typedItems = items
+
+        return <form ref={ref} className="w-full flex flex-col gap-2 text-center user-form">
+          {
+            typedItems.map((item) => {
+              if (item.type === 'text') {
+                return <label className="w-full flex flex-col gap-2 items-start justify-start">
+                  {item.label}
+                  <Input value={item.value} id={item.id+'--'+item.label} placeholder={item.placeholder} />
+                </label>
+              } else if (item.type === 'email') {
+                return <label className="w-full flex flex-col gap-2 items-start justify-start">
+                  {item.label}
+                  <Input value={item.value} id={item.id+'--'+item.label} placeholder={item.placeholder} type="email" />
+                </label>
+              } else if (item.type === 'phone') {
+                return <label className="w-full flex flex-col gap-2 items-start justify-start">
+                  {item.label}
+                  <Input value={item.value} id={item.id+'--'+item.label} placeholder={item.placeholder} type="tel" />
+                </label>
+              } else if (item.type === 'number') {
+                return <label className="w-full flex flex-col gap-2 items-start justify-start">
+                  {item.label}
+                  <Input value={item.value} id={item.id+'--'+item.label} placeholder={item.placeholder} type="number" />
+                </label>
+              } else if (item.type === 'textarea') {
+                  return <label className="w-full flex flex-col gap-2 items-start justify-start">
+                  {item.label}
+                  <Input value={item.value} id={item.id+'--'+item.label} placeholder={item.placeholder} type="textarea" />
+                </label>
+              }
+            })
+          }
+        </form>
+      }),
+      questions: React.forwardRef(function QuestionsComponent(props, ref) {
+        const {
+          items,
+          render,
+          action,
+          emoji_position
+        } = props
+
+        const [checkedItems, setCheckedItems] = React.useState(items.reduce((acc, item) => {
+          acc[item.id] = false
+          return acc
+        }, {}))
+
+        const toggleChecked = (id) => {
+          console.log(id, checkedItems, !checkedItems[id])
+          setCheckedItems({
+            ...checkedItems,
+            [id]: !checkedItems[id]
+          })
+        }
+        React.useEffect(() => {
+          try {
+            lucide.createIcons();
+          } catch (error) {
+            console.log(error)
+          }
+        }, [])
+
+        return <div ref={ref} className={"w-full flex gap-2 text-center "+(render === 'list' ? 'flex-col' : 'flex-row flex-wrap justify-between')}>
+            {items.map((item, index) => {
+                const EmojiComponent = () => {
+                    return <div className={`text-2xl`}>
+                        {item.emoji}
+                    </div>
+                }
+                const emoji_position_class = () => {
+                    if (emoji_position === 'left') return 'flex-row'
+                    if (emoji_position === 'right') return 'flex-row-reverse'
+                    if (emoji_position === 'top') return 'flex-col'
+                    if (emoji_position === 'bottom') return 'flex-col-reverse'
+                    return ''
+                }
+                const handleClick = () => {
+                  if (item.url) {
+                    safeOpenUrl(item.url);
+                  } else {
+                    toggleChecked(item.id)
+                  }
+                }
+                return <label key={item.id} 
+                  onClick={handleClick}
+                htmlFor={item.id+'--'+item.title}
+                className={"question-item "+(checkedItems[item.id] ? ' on bg-slate-300 hover:bg-slate-400 focus:bg-slate-400 ' : ' off ')+" px-4 py-2 rounded-md ring-1 ring-gray-200 flex flex-col items-center justify-center gap-2 hover:bg-gray-100 cursor-pointer focus:bg-gray-100 " + (render === 'list' && 'w-full')}
+                style={{
+                    width: render === 'grid-2' ? 'calc(50% - 0.5rem)' : undefined
+                }}
+                >
+                  {
+                    item.image && (
+                        <img src={item.image} alt={item.title} className="w-full object-cover p-2" />
+                    )
+                }
+                    <div className={`${emoji_position_class()} flex flex-row items-center justify-center`}>
+                        {
+                            item.emoji && (
+                                <EmojiComponent />
+                            )
+                        }
+                        <span className="flex flex-row gap-2 items-center title-question">
+                            {item.title}
+                            {
+                                action === 'arrow' && (
+                                    <div className="rounded-full bg-slate-100 p-1 shadow-md">
+                                        <i data-lucide="arrow-right" className="h-4 w-4" />
+                                    </div>
+                                )
+                            }
+                            {
+                                action === 'checkbox' && (
+                                    <Checkbox id={item.id+'--'+item.title} checked={checkedItems[item.id]}/>
+                                )
+                            }
+                        </span>
+                    </div>
+                </label>
+            })}
+        </div>
+      }),
+      carrousel: React.forwardRef(function CarrouselComponent(props, ref) {
+        const {
+          items
+        } = props
+
+        /**
+         * <section class="splide" aria-label="Splide Basic HTML Example">
+  <div class="splide__track">
+		<ul class="splide__list">
+			<li class="splide__slide">Slide 01</li>
+			<li class="splide__slide">Slide 02</li>
+			<li class="splide__slide">Slide 03</li>
+		</ul>
+  </div>
+</section>
+        */
+        return <div ref={ref} className="w-full flex flex-col gap-2 text-center">
+          <section className="splide" aria-label="Splide Basic HTML Example">
+            <div className="splide__track">
+              <ul className="splide__list">
+                {
+                  items.map((item, index) => {
+                    return <li className="splide__slide" key={index}>
+                      <div className="p-1">
+                        <Card className="w-full">
+                            <CardContent className="p-2">
+                                <CardHeader className="flex flex-col gap-2 items-center justify-center">
+                                    <img src={item.image} alt={item.title} className="w-full object-cover" />
+                                    <CardTitle>
+                                        {item.title}
+                                        <br />
+                                        <span className="text-sm text-muted-foreground">
+                                            {item.description}
+                                        </span>
+                                    </CardTitle>
+                                </CardHeader>
+                            </CardContent>
+                        </Card>
+                      </div>
+                    </li>
+                  })
+                }
+              </ul>
+            </div>
+          </section>
+        </div>
+      }),
+      notification: React.forwardRef(function NotificationComponent(props, ref) {
+        /**
+         * @type {{
+            title: string
+            description: string
+            color: string
+            time_to_exit: number
+            position: 'top-right' | 'top-left' | 'bottom-right' | 'bottom-left'
+          }}
+         * */
+        const {
+          title,
+          description,
+          color,
+          time_to_exit,
+          position
+        } = props
+
+        const position_to_class = {
+            'top-right': 'top-0 right-0',
+            'top-left': 'top-0 left-0',
+            'bottom-right': 'bottom-0 right-0',
+            'bottom-left': 'bottom-0 left-0',
+        }
+
+        const [hide, setHide] = React.useState(false)
+
+        React.useEffect(() => {
+          setTimeout(() => {
+            setHide(true)
+          }, time_to_exit * 1000)
+        }, [])
+
+        const [width, setWidth] = React.useState(100)
+
+        React.useEffect(() => {
+          setTimeout(() => {
+            setWidth(0)
+          }, 100)
+        }, [])
+
+        return <div ref={ref} className={`fixed rounded-md overflow-hidden bg-white flex flex-col gap-2 text-center transition-all duration-200 ease-in-out w-fit m-4 ${position_to_class[position]} ${hide ? 'opacity-0 translate-y-[-100%]' : ''}`} style={{
+          zIndex: 100
+        }}>
+            <div className="w-full p-4 rounded-md border-[1px] border-gray-200">
+                <div className="flex flex-col gap-0.5 justify-start items-start">
+                    <span className="text-lg font-bold">{title}</span>
+                    <span className="text-sm text-muted-foreground">{description}</span>
+                </div>
+                <div className="absolute bottom-0 left-0 h-2 w-full" style={{
+                    transitionDuration: `${time_to_exit}s`,
+                    transitionTimingFunction: 'linear',
+                    transitionDelay: '0s',
+                    transitionProperty: 'width',
+                    width: `${width}%`,
+                    backgroundColor: color,
+                }}>
+                </div>
+            </div>
+        </div>
+      })
+    }
+    const Checkbox = (props) => {
+      const { className, ...restProps } = props;
+      React.useEffect(() => {
+        try {
+          lucide.createIcons();
+        } catch (error) {
+          console.log(error)
+        }
+      }, [])
+      return (
+        <div
+          role="checkbox"
+          aria-checked={restProps.checked}
+          tabIndex={0}
+          className={`
+            peer h-4 w-4 shrink-0 rounded-sm border border-primary ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50 data-[state=checked]:bg-primary data-[state=checked]:text-primary-foreground
+            ${className}
+          `}
+          {...restProps}
+        >
+          <div
+            className={"flex items-center justify-center text-current "+(restProps.checked ? 'opacity-100' : 'opacity-0')}
+          >
+            <i data-lucide="check" className="h-4 w-4" />
+          </div>
+        </div>
+      );
+    };
+    const Input = ({ value, id, placeholder, type = "text" }) => {
+      if (type === "textarea") {
+        return (
+          <textarea
+            value={value}
+            id={id}
+            placeholder={placeholder}
+            className="w-full px-3 py-2 text-gray-700 border rounded-lg focus:outline-none focus:border-blue-500 resize-none"
+            rows={4}
+          />
+        );
+      }
+
+      return (
+        <input
+          type={type}
+          value={value}
+          id={id}
+          placeholder={placeholder}
+          className="w-full px-3 py-2 text-gray-700 border rounded-lg focus:outline-none focus:border-blue-500"
+        />
+      );
+    };
+    function ChartContainer({ children, config }) {
+    return (
+      <div className="w-full rounded-lg border bg-background p-4">
+        <div className="flex flex-col gap-4">
+          <div className="flex items-center gap-4">
+            {Object.entries(config).map(([key, { label, color }]) => (
+              <div key={key} className="flex items-center gap-2">
+                <div
+                  className="h-3 w-3 rounded-full"
+                  style={{ backgroundColor: color }}
+                />
+                <span className="text-sm text-muted-foreground">{label}</span>
+              </div>
+            ))}
+          </div>
+          {children}
+        </div>
+      </div>
+    );
+  }
+
+  function CircularProgress({ value, time = 2, color = "#1a1a1a", description, className, ...props }) {
+  const [progress, setProgress] = React.useState(0);
+  const size = 120;
+  const strokeWidth = 8;
+  const radius = (size - strokeWidth) / 2;
+  const circumference = radius * 2 * Math.PI;
+  const offset = circumference - (progress / 100) * circumference;
+
+  React.useEffect(() => {
+    const steps = 60; // Number of steps for smooth animation
+    const increment = value / steps;
+    const stepDuration = (time * 1000) / steps; // Convert time from seconds to milliseconds
+    let currentProgress = 0;
+
+    const interval = setInterval(() => {
+      if (currentProgress < value) {
+        currentProgress = Math.min(currentProgress + increment, value);
+        setProgress(currentProgress);
+      } else {
+        clearInterval(interval);
+      }
+    }, stepDuration);
+
+    return () => clearInterval(interval);
+  }, [value, time]);
+
+  return (
+    <div className={cn("flex flex-col items-center gap-2", className)} {...props}>
+      <div className="relative inline-flex items-center justify-center">
+        <svg width={size} height={size} className="rotate-[-90deg]">
+          {/* Background circle */}
+          <circle
+            cx={size / 2}
+            cy={size / 2}
+            r={radius}
+            fill="none"
+            stroke="#f5f5f5"
+            strokeWidth={strokeWidth}
+          />
+          {/* Progress circle */}
+          <circle
+            cx={size / 2}
+            cy={size / 2}
+            r={radius}
+            fill="none"
+            stroke={color}
+            strokeWidth={strokeWidth}
+            strokeDasharray={circumference}
+            strokeDashoffset={offset}
+            strokeLinecap="round"
+            style={{
+              transition: "stroke-dashoffset 200ms ease-in-out"
+            }}
+          />
+        </svg>
+        <div className="absolute flex flex-col items-center">
+          <span className="text-2xl font-semibold text-primary">
+            {Math.round(progress)}%
+          </span>
+        </div>
+      </div>
+      <span className="text-sm text-muted-foreground">{description}</span>
+    </div>
+  );
+}
+    function FunilContainer({
+      funil, funilStructure
+    }) {
+      const [activeStepIndex, setActiveStepIndex] = useState(0)
+
+      const activeStep = funilStructure.steps[activeStepIndex]
+      
+      const mountCarrousel = () => {
+        try {
+          var splide = new Splide( '.splide' );
+          splide.mount();
+        } catch (error) {
+          console.log(error)
+        }
+      }
+      const handleNext = () => {
+        setActiveStepIndex(prevActiveStepIndex => {
+          if (prevActiveStepIndex === funilStructure.steps.length - 1) {
+            return 0
+          }
+          return prevActiveStepIndex + 1
+        })
+        try {
+          setTimeout(() => {
+            mountCarrousel()
+          }, 200)
+        } catch (error) {
+          console.log(error)
+        }
+      }
+      return (
+        <div className="bg-white overflow-y-auto fade-in w-full h-[90%] min-w-[300px] max-w-[600px] flex flex-col gap-2 items-start p-4 rounded-md shadow-md">
+          {
+            activeStep.contents.map((component, index) => {
+              const FoundComponent = stepComponentsJSX[component.type]
+              if (!FoundComponent) {
+                return null
+              }
+              return <FoundComponent onNext={handleNext} {...component} index={index} />
+            })
+          }
+        </div>
+      )
+    }
+
+    function collectUserInfo() {
+      const userInfo = {
+        timestamp: new Date().toISOString(),
+        userAgent: navigator.userAgent,
+        platform: navigator.platform,
+        language: navigator.language,
+        screenResolution: `${window.screen.width}x${window.screen.height}`,
+        viewportSize: `${window.innerWidth}x${window.innerHeight}`,
+        referrer: document.referrer || "Direct",
+        timeZone: Intl.DateTimeFormat().resolvedOptions().timeZone,
+        colorDepth: window.screen.colorDepth,
+        online: navigator.onLine,
+        cookiesEnabled: navigator.cookieEnabled,
+      };
+
+      return userInfo;
+    }
+    function App() {
+      const [loading, setLoading] = useState(true)
+      const [funil, setFunil] = useState(null)
+      const [funilStructure, setFunilStructure] = useState(null)
+      const parseDate = (date) => {
+        try {
+          return new Date(date)
+        } catch (error) {
+          return new Date()
+        }
+      }
+      useEffect(() => {
+        (async () => {
+          try {
+            const db = firestore;
+            const docRef = doc(db, 'funis-base', funil_id);
+            const docSnap = await getDoc(docRef);
+            
+            if (docSnap.exists()) {
+              setFunil(docSnap.data());
+  
+              const docRefStructure = doc(db, 'funis-structure', funil_id);
+              const docSnapStructure = await getDoc(docRefStructure);
+              if (docSnapStructure.exists()) {
+                const funilStructure = docSnapStructure.data();
+                console.log(funilStructure)
+                funilStructure.steps.forEach(step => {
+                  step.contents.forEach(component => {
+                    if (component.type === 'timer') {
+                      (component).date = parseDate((component).date)
+                    }
+                  })
+                })
+                setFunilStructure(funilStructure);
+              }
+              const acessosCollection = collection(db, 'acessos')
+              const newAcesso = {
+                id: localStorage.getItem('uuid'),
+                date: new Date(),
+                funil_id: funil_id,
+                user_info: collectUserInfo(),
+              }
+              await addDoc(acessosCollection, newAcesso);
+              setLoading(false)
+            } else {
+              alert('Funil não encontrado')
+            }
+          } catch (error) {
+            console.log(error)
+            alert("Erro ao carregar o funil, tente outro link")
+          }
+        })().then(() => {
+          setTimeout(() => {
+            lucide.createIcons();
+            var splide = new Splide( '.splide' );
+            splide.mount();
+          }, 200)
+        })
+      }, [])
+      return (
+        <div className="w-full bg-neutral-100 h-screen flex flex-col justify-center items-center">
+          {
+            loading ? <SimpleSpinner/> : <FunilContainer funil={funil} funilStructure={funilStructure} />
+          } 
+        </div>
+      );
+    }
+    // if uuid is not set, generate a new one
+    if (!localStorage.getItem('uuid')) {
+      localStorage.setItem('uuid', uuidv4());
+    }
+    ReactDOM.createRoot(document.getElementById('root')).render(<App />);
+    
+    document.addEventListener( 'DOMContentLoaded', function() {
+      var splide = new Splide( '.splide' );
+      splide.mount();
+    } );
+  </script>
+  
+  <script src="https://unpkg.com/lucide@latest"></script>
+  <script defer>
+    lucide.createIcons();
+  </script>
+  
+  <!-- SCRIPT LOCATION FOOTER START -->
+  <!-- RENDER SCRIPT WITH LOCATION = FOOTER HERE -->
+  <!-- SCRIPT LOCATION FOOTER END -->
+</body>
+</html>
